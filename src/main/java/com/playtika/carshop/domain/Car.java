@@ -2,16 +2,11 @@ package com.playtika.carshop.domain;
 
 import lombok.*;
 
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@ToString
+@Data
 public class Car {
 
     @NonNull
-    private String type;
-
+    private final String type;
     @NonNull
-    private int year;
+    private final int year;
 }

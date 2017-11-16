@@ -1,16 +1,14 @@
 package com.playtika.carshop.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NonNull;
 
 @Data
-public class CarSaleInfo {
-    @NonNull
-    private Long id;
+public class CarSaleRequest {
     @NonNull
     private final Car car;
     @NonNull
     private final long price;
     @NonNull
     private final String contact;
-
 }

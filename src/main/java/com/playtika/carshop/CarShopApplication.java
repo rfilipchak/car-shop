@@ -6,10 +6,7 @@ import org.springframework.boot.actuate.autoconfigure.MetricExportAutoConfigurat
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
-import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 
 @SpringBootApplication
@@ -18,10 +15,8 @@ import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 		EndpointMBeanExportAutoConfiguration.class,
 		MetricExportAutoConfiguration.class,
 		MultipartAutoConfiguration.class,
-		SpringApplicationAdminJmxAutoConfiguration.class,
-		ValidationAutoConfiguration.class,
-		JacksonAutoConfiguration.class,
-		ErrorMvcAutoConfiguration.class})
+		SpringApplicationAdminJmxAutoConfiguration.class})
+
 public class CarShopApplication {
 
 	public static void main(String[] args) {
