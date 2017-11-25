@@ -11,58 +11,60 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class CarShopControllerSystemTest {
+public class CarShopSystemTest {
     @Autowired
     private WebApplicationContext context;
 
     private MockMvc mockMvc;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
     @Test
     public void shouldCreateANewCarSuccessfullyForSystemContext() throws Exception {
-        //add new car
-        String result = this.mockMvc.perform(post("/carSaleInfo")
-                .content("{\"type\": \"Ford\",\"year\":2017}")
-                .param("price", "200000").param("contact", "contact")
-                .contentType("application/json;charset=UTF-8"))
-                .andExpect(status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Long id = Long.parseLong(result);
-        assertThat(id).isNotNull().isEqualTo(1L);
+        assertThat(Long.parseLong(addNewCar("Roman"))).isBetween(0L, 10L);
+    }
 
-        //get all car
-        this.mockMvc.perform(get("/carSaleInfo"))
+    @Test
+    public void shouldReturnAllCarsSuccessfullyForSystemContext() throws Exception {
+        addNewCar("Yura");
+        this.mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].car.type").value("Ford"))
-                .andExpect(jsonPath("$[0].car.year").value(2017))
-                .andExpect(jsonPath("$[0].price").value(200000))
-                .andExpect(jsonPath("$[0].contact").value("contact"));
-        //get car by id
-        this.mockMvc.perform(get("/carSaleInfo/" + id))
+                .andExpect(jsonPath("$[*].contact").value("Yura"));
+    }
+
+    @Test
+    public void shouldReturnCarByIdSuccessfullyForSystemContext() throws Exception {
+
+        this.mockMvc.perform(get("/cars/" + addNewCar("Sveta")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.car.type").value("Ford"))
                 .andExpect(jsonPath("$.car.year").value(2017))
                 .andExpect(jsonPath("$.price").value(200000))
-                .andExpect(jsonPath("$.contact").value("contact"));
-        //remove car
-        this.mockMvc.perform(delete("/carSaleInfo/" + 1L))
+                .andExpect(jsonPath("$.contact").value("Sveta"));
+    }
+
+    @Test
+    public void shouldRemoveCarByIdSuccessfullyForSystemContext() throws Exception {
+
+        this.mockMvc.perform(delete("/cars/" + addNewCar("Oleg")))
                 .andExpect(status().isOk());
     }
 
+    private String addNewCar(String contact) throws Exception {
+        return this.mockMvc.perform(post("/cars")
+                .content("{\"type\": \"Ford\",\"year\":2017}")
+                .param("price", "200000").param("contact", contact)
+                .contentType("application/json;charset=UTF-8")).andReturn().getResponse().getContentAsString();
+    }
 }
 

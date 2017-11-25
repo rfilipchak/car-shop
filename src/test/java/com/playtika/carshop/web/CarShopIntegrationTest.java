@@ -1,9 +1,7 @@
 package com.playtika.carshop.web;
 
-import com.playtika.carshop.Exeprions.CarNotFoundException;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
-import com.playtika.carshop.domain.CarSaleRequest;
 import com.playtika.carshop.service.CarService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,13 +13,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -29,19 +27,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarShopController.class)
-public class CarShopControllerIntegrationTest {
+public class CarShopIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private CarService carService;
+    private CarService service;
 
     @Test
     public void shouldCreateANewCarSuccessfully() throws Exception {
         long createdCarId = 1L;
-        when(carService.addCar(any(CarSaleRequest.class))).thenReturn(createdCarId);
+        Car car = new Car("Ford", 2017);
+        long price = 200000;
+        String contact = "contact";
+        when(service.addCar(car, price, contact)).thenReturn(createdCarId);
 
-        String result = mockMvc.perform(post("/carSaleInfo")
+        String result = mockMvc.perform(post("/cars")
                 .content("{\"type\": \"Ford\",\"year\":2017}")
                 .param("price", "200000").param("contact", "contact")
                 .contentType("application/json;charset=UTF-8"))
@@ -52,7 +53,7 @@ public class CarShopControllerIntegrationTest {
     }
     @Test
     public void shouldFailCreatingANewCarWithMissingParams() throws Exception {
-        mockMvc.perform(post("/carSaleInfo")
+        mockMvc.perform(post("/cars")
                 .content("{\"type\": \"Ford\",\"year\":2017}")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest())
@@ -63,9 +64,9 @@ public class CarShopControllerIntegrationTest {
     @Test
     public void shouldReturnAllCarsIfExist() throws Exception {
         Collection<CarSaleInfo> cars = asList(carSaleInfo(1L, "Ford"), carSaleInfo(2L, "Toyota"));
-        when(carService.getCars()).thenReturn(cars);
+        when(service.getCars()).thenReturn(cars);
 
-        mockMvc.perform(get("/carSaleInfo"))
+        mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -77,9 +78,9 @@ public class CarShopControllerIntegrationTest {
 
     @Test
     public void shouldReturnEmptyListIfThereAreNoCars() throws Exception {
-        when(carService.getCars()).thenReturn(Collections.emptyList());
+        when(service.getCars()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/carSaleInfo"))
+        mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
     }
@@ -87,9 +88,8 @@ public class CarShopControllerIntegrationTest {
     @Test
     public void shouldReturnCarById() throws Exception {
         Long carId = 1L;
-        when(carService.getCar(carId)).thenReturn(carSaleInfo(carId, "Test Car"));
-
-        mockMvc.perform(get("/carSaleInfo/" + carId))
+        when(service.getCar(carId)).thenReturn(java.util.Optional.of(carSaleInfo(carId, "Test Car")));
+        mockMvc.perform(get("/cars/" + carId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(carId))
                 .andExpect(jsonPath("$.car.type").value("Test Car"));
@@ -97,32 +97,26 @@ public class CarShopControllerIntegrationTest {
 
     @Test
     public void shouldReturnErrorIfCarDoesNotExist() throws Exception {
-        when(carService.getCar(anyLong())).thenThrow(new CarNotFoundException("Car not found"));
-
-        mockMvc.perform(get("/carSaleInfo/" + 12))
+        when(service.getCar(12L)).thenReturn(Optional.empty());
+        mockMvc.perform(get("/cars/" + 12L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(NOT_FOUND.value()))
                 .andExpect(jsonPath("$.message").value(NOT_FOUND.getReasonPhrase()));
     }
 
     @Test
-    public void shouldRemoveCarById() throws Exception {
-        doNothing().when(carService).removeCar(anyLong());
-
-        mockMvc.perform(delete("/carSaleInfo/" + 1L))
+    public void shouldReturnOkAfterRemovingCarById() throws Exception {
+        when(service.removeCar(anyLong())).thenReturn(true);
+        mockMvc.perform(delete("/cars/" + 1L))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnErrorOnRemoveNonExistingCar() throws Exception {
-        doThrow(new CarNotFoundException("Car not found")).when(carService).removeCar(anyLong());
-
-        mockMvc.perform(delete("/carSaleInfo/" + 1L))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value(NOT_FOUND.value()))
-                .andExpect(jsonPath("$.message").value(NOT_FOUND.getReasonPhrase()));
+        when(service.removeCar(12L)).thenReturn(false);
+        mockMvc.perform(delete("/cars/" + 12L))
+                .andExpect(status().isNoContent());
     }
-
 
     private CarSaleInfo carSaleInfo(Long id, String model) {
         Car testCar = new Car(model, 2017);

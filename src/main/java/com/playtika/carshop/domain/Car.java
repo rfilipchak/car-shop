@@ -1,6 +1,8 @@
 package com.playtika.carshop.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NonNull;
+
 
 @Data
 public class Car {

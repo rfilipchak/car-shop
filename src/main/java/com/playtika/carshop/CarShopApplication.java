@@ -1,21 +1,15 @@
 package com.playtika.carshop;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.actuate.autoconfigure.EndpointMBeanExportAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.MetricExportAutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration;
-import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.MultipartAutoConfiguration;
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude = {
-		JmxAutoConfiguration.class,
-		EndpointMBeanExportAutoConfiguration.class,
-		MetricExportAutoConfiguration.class,
-		MultipartAutoConfiguration.class,
-		SpringApplicationAdminJmxAutoConfiguration.class})
+//@EnableAutoConfiguration(exclude = {
+//		JmxAutoConfiguration.class,
+//		EndpointMBeanExportAutoConfiguration.class,
+//		MetricExportAutoConfiguration.class,
+//		MultipartAutoConfiguration.class,
+//		SpringApplicationAdminJmxAutoConfiguration.class})
 
 public class CarShopApplication {
 

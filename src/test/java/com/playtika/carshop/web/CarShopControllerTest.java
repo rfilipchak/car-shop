@@ -19,21 +19,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 public class CarShopControllerTest {
     @Mock
-    private CarService carService;
+    private CarService service;
 
-    private CarShopController carShopController;
+    private CarShopController controller;
 
     private MockMvc mockMvc;
 
     @Before
     public void init() {
-        carShopController = new CarShopController(carService);
-        mockMvc = MockMvcBuilders.standaloneSetup(carShopController).build();
+        controller = new CarShopController(service);
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
     @Test
     public void shouldFailCreatingCarWithMissingBody() throws Exception {
-        mockMvc.perform(post("/carSaleInfo")
+        mockMvc.perform(post("/cars")
                 .param("price", "200000").param("contact", "contact")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -41,7 +41,7 @@ public class CarShopControllerTest {
 
     @Test
     public void shouldFailCreatingCarWithMissingParams() throws Exception {
-        mockMvc.perform(post("/carSaleInfo")
+        mockMvc.perform(post("/cars")
                 .content("{\"type\": \"Ford\",\"year\":2017}")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest());
@@ -49,43 +49,31 @@ public class CarShopControllerTest {
 
     @Test
     public void shouldReturnBadRequestIfCarIdIsNull() throws Exception {
-        mockMvc.perform(get("/carSaleInfo/" + null))
+        mockMvc.perform(get("/cars/" + null))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldReturnBadRequestIfCarIdDoesNotValid() throws Exception {
-        mockMvc.perform(get("/carSaleInfo/" + "nulfdsfl"))
+        mockMvc.perform(get("/cars/" + "nulfdsfl"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void shouldReturnOkForCorrecrFormatRequestedCarId() throws Exception {
-        mockMvc.perform(get("/carSaleInfo/" + 123L))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void shouldReturnEmptyListIfWhereNoAddedCars() throws Exception {
-        when(carService.getCars()).thenReturn(Collections.emptyList());
-        assertThat(carShopController.getAllCars()).isEmpty();
-    }
-
-    @Test
-    public void shouldReturnOkForCorrecrFormatRequestedCarIdForDelete() throws Exception {
-        mockMvc.perform(delete("/carSaleInfo/" + 123L))
-                .andExpect(status().isOk());
+        when(service.getCars()).thenReturn(Collections.emptyList());
+        assertThat(controller.getAllCars()).isEmpty();
     }
 
     @Test
     public void shouldReturnBadRequestIfCarIdDoesNotValidForDelete() throws Exception {
-        mockMvc.perform(delete("/carSaleInfo/" + "njndjsad"))
+        mockMvc.perform(delete("/cars/" + "njndjsad"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void shouldReturnBadRequestForDeleteWithNullCarId() throws Exception {
-        mockMvc.perform(delete("/carSaleInfo/" + null))
+        mockMvc.perform(delete("/cars/" + null))
                 .andExpect(status().isBadRequest());
     }
 }

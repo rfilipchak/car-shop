@@ -5,7 +5,7 @@ import lombok.*;
 @Data
 public class CarSaleInfo {
     @NonNull
-    private Long id;
+    private final Long id;
     @NonNull
     private final Car car;
     @NonNull

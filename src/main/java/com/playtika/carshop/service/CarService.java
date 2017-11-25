@@ -1,14 +1,19 @@
 package com.playtika.carshop.service;
 
+import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
-import com.playtika.carshop.domain.CarSaleRequest;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface CarService {
-    long addCar(CarSaleRequest carSaleRequest);
-    Collection getCars();
-    CarSaleInfo getCar(Long id);
-    void removeCar(Long id);
+
+    long addCar(Car car, long price, String contact);
+
+    Collection<CarSaleInfo> getCars();
+
+    Optional<CarSaleInfo> getCar(Long id);
+
+    boolean removeCar(Long id);
 
 }
