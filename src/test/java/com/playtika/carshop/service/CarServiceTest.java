@@ -1,24 +1,44 @@
 package com.playtika.carshop.service;
 
+import com.playtika.carshop.daoService.Dao;
+import com.playtika.carshop.daoService.DaoImpl;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
 import java.util.Collection;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(SpringRunner.class)
+@DataJpaTest
 public class CarServiceTest {
+    @Autowired
+    private EntityManager em;
 
-    private CarService service = new CarServiceImpl();
+    private CarService service;
+
+    @Before
+    public void init() {
+        Dao dao = new DaoImpl(em);
+        service = new CarServiceImpl(dao);
+    }
 
     Car test_car = new Car("Test Car", 2017);
+    Car test_car2 = new Car("Test Car2", 2017);
     long price = 2000;
     String contact = "contact";
 
     @Test
     public void shouldReturnValidIdAfterAddingCar() {
+
         Long createdId = service.addCar(test_car, price, contact);
         assertThat(createdId).isNotNull().isEqualTo(1L);
     }
@@ -26,7 +46,7 @@ public class CarServiceTest {
     @Test
     public void shouldCreateNotEqualIdsAfterCreating() {
         assertThat(service.addCar(test_car, price, contact))
-                .isNotEqualTo(service.addCar(test_car, price, contact));
+                .isNotEqualTo(service.addCar(test_car2, price, contact));
     }
 
     @Test

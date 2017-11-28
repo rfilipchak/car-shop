@@ -8,7 +8,7 @@ import lombok.NonNull;
 public class Car {
 
     @NonNull
-    private final String type;
+    private final String brand;
     @NonNull
     private final int year;
 }

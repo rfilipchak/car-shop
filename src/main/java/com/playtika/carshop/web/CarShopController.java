@@ -40,7 +40,7 @@ public class CarShopController {
     @GetMapping(value = "{id}")
     public CarSaleInfo getCarInfoById(@PathVariable("id") long id) throws CarNotFoundException {
         return service.getCar(id)
-                .orElseThrow(() -> new CarNotFoundException("Car with id %s not found", id));
+                .orElseThrow(() -> new CarNotFoundException("Car not found", id));
     }
 
     @DeleteMapping(value = "{id}")

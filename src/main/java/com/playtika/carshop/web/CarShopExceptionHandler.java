@@ -2,6 +2,7 @@ package com.playtika.carshop.web;
 
 import com.playtika.carshop.exeptions.CarNotFoundException;
 import lombok.Data;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,7 +17,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class CarShopExceptionHandler {
 
-    @ExceptionHandler(CarNotFoundException.class)
+    @ExceptionHandler({CarNotFoundException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse handleNotFound(Exception e) {
