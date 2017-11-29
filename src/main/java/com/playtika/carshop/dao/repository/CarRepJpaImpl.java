@@ -14,6 +14,7 @@ import java.util.Collection;
 @Repository
 @AllArgsConstructor
 public class CarRepJpaImpl implements CarRepJpa {
+
     @PersistenceContext
     private EntityManager em;
 
@@ -65,6 +66,7 @@ public class CarRepJpaImpl implements CarRepJpa {
             return c;
         }
     }
+
     private PersonEntity checkPersonForExsist(PersonEntity p) {
         String contact = p.getContact();
         TypedQuery<Long> query = em.createQuery(

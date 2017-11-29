@@ -25,52 +25,56 @@ public class CarServiceTest {
 
     private CarService service;
 
+    Car testCar = new Car("Test Car", 2017, "AA-0177-BH", "black");
+    Car testCar2 = new Car("Test Car2", 2017, "AA-0178-BH", "black");
+    long price = 2000;
+    String contact = "contact";
+
     @Before
     public void init() {
         CarRepJpa carRepJpa = new CarRepJpaImpl(em);
         service = new CarServiceImpl(carRepJpa);
     }
 
-    Car test_car = new Car("Test Car", 2017, "AA-0177-BH", "black");
-    Car test_car2 = new Car("Test Car2", 2017, "AA-0178-BH", "black");
-    long price = 2000;
-    String contact = "contact";
-
     @Test
     public void shouldReturnValidIdAfterAddingCar() {
 
-        long id = addCarsForTest(test_car);
+        long id = addCarsForTest(testCar);
         assertThat(id).isNotNull();
     }
 
     @Test
     public void shouldCreateNotEqualIdsAfterCreating() {
-        assertThat(addCarsForTest(test_car))
-                .isNotEqualTo(addCarsForTest(test_car2));
+        long testId1 = addCarsForTest(testCar);
+        long testId2 = addCarsForTest(testCar2);
+        assertThat(testId1)
+                .isNotEqualTo(testId2);
     }
 
     @Test
     public void shouldReturnCarById() {
-        long testId1 = addCarsForTest(test_car);
-        long testId2 = addCarsForTest(test_car2);
+        long testId1 = addCarsForTest(testCar);
+        long testId2 = addCarsForTest(testCar2);
+        CarSaleInfo carInfo1 = new CarSaleInfo(testId1, testCar, price, contact);
+        CarSaleInfo carInfo2 = new CarSaleInfo(testId2, testCar2, price, contact);
 
         assertThat(service.getCar(testId1))
-                .isEqualTo(Optional.of(new CarSaleInfo(testId1, test_car, price, contact)));
+                .isEqualTo(Optional.ofNullable(carInfo1));
         assertThat(service.getCar(testId2))
-                .isEqualTo(Optional.of(new CarSaleInfo(testId2, test_car2, price, contact)));
+                .isEqualTo(Optional.ofNullable(carInfo2));
     }
 
     @Test
     public void shouldReturnCarsAfterGetting() {
-        long testId1 = addCarsForTest(test_car);
-        long testId2 = addCarsForTest(test_car2);
+        long testId1 = addCarsForTest(testCar);
+        long testId2 = addCarsForTest(testCar2);
         Collection<CarSaleInfo> cars = service.getCars();
-        assertThat(cars.contains(new CarSaleInfo(testId1, test_car, price, contact)));
-        assertThat(cars.contains(new CarSaleInfo(testId2, test_car2, price, contact)));
+        assertThat(cars.contains(new CarSaleInfo(testId1, testCar, price, contact)));
+        assertThat(cars.contains(new CarSaleInfo(testId2, testCar2, price, contact)));
     }
     @Test
     public void shouldNotDeleteCarsAfterDeleteCarSaleInfo() {
-        long testId1 = addCarsForTest(test_car);
+        long testId1 = addCarsForTest(testCar);
         service.removeCar(testId1);
         assertThat(service.getAllCars()).isNotEmpty();
     }
@@ -82,8 +86,8 @@ public class CarServiceTest {
 
     @Test
     public void shouldReturnTrueDuringRemoveCarWhenExist() {
-        long testId1 = addCarsForTest(test_car);
-        long testId2 = addCarsForTest(test_car2);
+        long testId1 = addCarsForTest(testCar);
+        long testId2 = addCarsForTest(testCar2);
         assertThat(service.removeCar(testId1)).isTrue();
         assertThat(service.removeCar(testId2)).isTrue();
     }
