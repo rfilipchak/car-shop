@@ -2,6 +2,7 @@ package com.playtika.carshop.web;
 
 import com.playtika.carshop.exeptions.CarNotFoundException;
 import lombok.Data;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -24,7 +25,7 @@ public class CarShopExceptionHandler {
         return new ErrorResponse(NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), e.getMessage());
     }
 
-    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ExceptionHandler({MissingServletRequestParameterException.class, ConstraintViolationException.class})
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleBadRequest(Exception e) {

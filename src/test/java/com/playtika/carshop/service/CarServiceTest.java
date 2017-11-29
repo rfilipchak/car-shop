@@ -1,7 +1,7 @@
 package com.playtika.carshop.service;
 
-import com.playtika.carshop.daoService.Dao;
-import com.playtika.carshop.daoService.DaoImpl;
+import com.playtika.carshop.dao.repository.CarRepJpa;
+import com.playtika.carshop.dao.repository.CarRepJpaImpl;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
 import org.junit.Before;
@@ -27,56 +27,65 @@ public class CarServiceTest {
 
     @Before
     public void init() {
-        Dao dao = new DaoImpl(em);
-        service = new CarServiceImpl(dao);
+        CarRepJpa carRepJpa = new CarRepJpaImpl(em);
+        service = new CarServiceImpl(carRepJpa);
     }
 
-    Car test_car = new Car("Test Car", 2017);
-    Car test_car2 = new Car("Test Car2", 2017);
+    Car test_car = new Car("Test Car", 2017, "AA-0177-BH", "black");
+    Car test_car2 = new Car("Test Car2", 2017, "AA-0178-BH", "black");
     long price = 2000;
     String contact = "contact";
 
     @Test
     public void shouldReturnValidIdAfterAddingCar() {
 
-        Long createdId = service.addCar(test_car, price, contact);
-        assertThat(createdId).isNotNull().isEqualTo(1L);
+        long id = addCarsForTest(test_car);
+        assertThat(id).isNotNull();
     }
 
     @Test
     public void shouldCreateNotEqualIdsAfterCreating() {
-        assertThat(service.addCar(test_car, price, contact))
-                .isNotEqualTo(service.addCar(test_car2, price, contact));
+        assertThat(addCarsForTest(test_car))
+                .isNotEqualTo(addCarsForTest(test_car2));
     }
 
     @Test
-    public void shoulReturnCarById() {
-        addCarsForTest();
-        Optional<CarSaleInfo> carSaleInfo = service.getCar(1L);
-        assertThat(service.getCar(1L)).isEqualTo(Optional.of(new CarSaleInfo(1L, test_car, price, contact)));
-        assertThat(service.getCar(2L)).isEqualTo(Optional.of(new CarSaleInfo(2L, test_car, price, contact)));
+    public void shouldReturnCarById() {
+        long testId1 = addCarsForTest(test_car);
+        long testId2 = addCarsForTest(test_car2);
+
+        assertThat(service.getCar(testId1))
+                .isEqualTo(Optional.of(new CarSaleInfo(testId1, test_car, price, contact)));
+        assertThat(service.getCar(testId2))
+                .isEqualTo(Optional.of(new CarSaleInfo(testId2, test_car2, price, contact)));
     }
 
     @Test
-    public void shoulReturnCarsAfterGetting() {
-        addCarsForTest();
+    public void shouldReturnCarsAfterGetting() {
+        long testId1 = addCarsForTest(test_car);
+        long testId2 = addCarsForTest(test_car2);
         Collection<CarSaleInfo> cars = service.getCars();
-        assertThat(cars.contains(new CarSaleInfo(1L, test_car, price, contact)));
-        assertThat(cars.contains(new CarSaleInfo(2L, test_car, price, contact)));
+        assertThat(cars.contains(new CarSaleInfo(testId1, test_car, price, contact)));
+        assertThat(cars.contains(new CarSaleInfo(testId2, test_car2, price, contact)));
+    }
+    @Test
+    public void shouldNotDeleteCarsAfterDeleteCarSaleInfo() {
+        long testId1 = addCarsForTest(test_car);
+        service.removeCar(testId1);
+        assertThat(service.getAllCars()).isNotEmpty();
     }
 
     @Test
-    public void shoulReturnEmptyAfterGettingNotExistingCar() {
+    public void shouldReturnEmptyAfterGettingNotExistingCar() {
         assertThat(service.getCar(123L)).isEqualTo(Optional.empty());
     }
 
     @Test
     public void shouldReturnTrueDuringRemoveCarWhenExist() {
-        addCarsForTest();
-        assertThat(service.removeCar(1L)).isTrue();
-        assertThat(service.getCars()).isNotEmpty();
-        assertThat(service.removeCar(2L)).isTrue();
-        assertThat(service.getCars()).isEmpty();
+        long testId1 = addCarsForTest(test_car);
+        long testId2 = addCarsForTest(test_car2);
+        assertThat(service.removeCar(testId1)).isTrue();
+        assertThat(service.removeCar(testId2)).isTrue();
     }
 
     @Test
@@ -84,8 +93,8 @@ public class CarServiceTest {
         assertThat(service.removeCar(Long.MAX_VALUE)).isFalse();
     }
 
-    private void addCarsForTest() {
-        service.addCar(test_car, price, contact);
-        service.addCar(test_car, price, contact);
+    private long addCarsForTest(Car car) {
+        long testCarId = service.addCar(car, price, contact);
+        return testCarId;
     }
 }

@@ -37,13 +37,13 @@ public class CarShopIntegrationTest {
     @Test
     public void shouldCreateANewCarSuccessfully() throws Exception {
         long createdCarId = 1L;
-        Car car = new Car("Ford", 2017);
+        Car car = new Car("Ford", 2017,"AA-0177-BH", "black");
         long price = 200000;
         String contact = "contact";
         when(service.addCar(car, price, contact)).thenReturn(createdCarId);
 
         String result = mockMvc.perform(post("/cars")
-                .content("{\"type\": \"Ford\",\"year\":2017}")
+                .content("{\"brand\": \"Ford\",\"year\":2017,\"registration\":\"AA-0177-BH\",\"color\":\"black\"}")
                 .param("price", "200000").param("contact", "contact")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isOk())
@@ -54,7 +54,7 @@ public class CarShopIntegrationTest {
     @Test
     public void shouldFailCreatingANewCarWithMissingParams() throws Exception {
         mockMvc.perform(post("/cars")
-                .content("{\"type\": \"Ford\",\"year\":2017}")
+                .content("{\"brand\": \"Ford\",\"year\":2017,\"registration\":\"AA-0177-BH\",\"color\":\"black\"}")
                 .contentType("application/json;charset=UTF-8"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(BAD_REQUEST.value()))
@@ -71,9 +71,9 @@ public class CarShopIntegrationTest {
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].car.type").value("Ford"))
+                .andExpect(jsonPath("$[0].car.brand").value("Ford"))
                 .andExpect(jsonPath("$[1].id").value(2L))
-                .andExpect(jsonPath("$[1].car.type").value("Toyota"));
+                .andExpect(jsonPath("$[1].car.brand").value("Toyota"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class CarShopIntegrationTest {
         mockMvc.perform(get("/cars/" + carId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(carId))
-                .andExpect(jsonPath("$.car.type").value("Test Car"));
+                .andExpect(jsonPath("$.car.brand").value("Test Car"));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class CarShopIntegrationTest {
     }
 
     private CarSaleInfo carSaleInfo(Long id, String model) {
-        Car testCar = new Car(model, 2017);
+        Car testCar = new Car(model, 2017,"J1234","black");
         return new CarSaleInfo(id, testCar, 200000, "contact");
     }
 }

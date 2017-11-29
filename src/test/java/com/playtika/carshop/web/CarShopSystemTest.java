@@ -29,25 +29,26 @@ public class CarShopSystemTest {
 
     @Test
     public void shouldCreateANewCarSuccessfullyForSystemContext() throws Exception {
-        assertThat(Long.parseLong(addNewCar("Roman"))).isBetween(0L, 10L);
+        assertThat(Long.parseLong(addNewCar("Roman", "R123"))).isBetween(0L, 10L);
     }
 
     @Test
     public void shouldReturnAllCarsSuccessfullyForSystemContext() throws Exception {
-        addNewCar("Yura");
+        addNewCar("Yura","R122");
         this.mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$[*].contact").value("Yura"));
+                .andExpect(jsonPath("$[0].car.registration").value("R122"))
+                .andExpect(jsonPath("$[0].person.contact").value("Yura"));
     }
 
     @Test
     public void shouldReturnCarByIdSuccessfullyForSystemContext() throws Exception {
 
-        this.mockMvc.perform(get("/cars/" + addNewCar("Sveta")))
+        this.mockMvc.perform(get("/cars/" + addNewCar("Sveta","R121")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(jsonPath("$.car.type").value("Ford"))
+                .andExpect(jsonPath("$.car.brand").value("Ford"))
                 .andExpect(jsonPath("$.car.year").value(2017))
                 .andExpect(jsonPath("$.price").value(200000))
                 .andExpect(jsonPath("$.contact").value("Sveta"));
@@ -56,13 +57,14 @@ public class CarShopSystemTest {
     @Test
     public void shouldRemoveCarByIdSuccessfullyForSystemContext() throws Exception {
 
-        this.mockMvc.perform(delete("/cars/" + addNewCar("Oleg")))
+        this.mockMvc.perform(delete("/cars/" + addNewCar("Oleg","R120")))
                 .andExpect(status().isOk());
     }
 
-    private String addNewCar(String contact) throws Exception {
+    private String addNewCar(String contact,String registration) throws Exception {
+        String content = String.format("{\"brand\": \"Ford\",\"year\":2017,\"registration\":\"%s\",\"color\":\"black\"}", registration);
         return this.mockMvc.perform(post("/cars")
-                .content("{\"type\": \"Ford\",\"year\":2017}")
+                .content(content)
                 .param("price", "200000").param("contact", contact)
                 .contentType("application/json;charset=UTF-8")).andReturn().getResponse().getContentAsString();
     }

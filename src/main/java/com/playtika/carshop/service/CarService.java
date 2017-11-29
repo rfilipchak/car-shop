@@ -16,4 +16,6 @@ public interface CarService {
 
     boolean removeCar(Long id);
 
+    Collection<Car> getAllCars();//for test
+
 }
