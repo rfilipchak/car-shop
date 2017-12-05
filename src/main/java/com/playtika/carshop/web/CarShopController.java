@@ -17,14 +17,12 @@ import java.util.Collection;
 @Slf4j
 @Data
 public class CarShopController {
-//    private static final Logger LOG
-//            = LoggerFactory.getLogger(CarShopController.class);
 
     private final CarService service;
 
     @PostMapping
     public Long addCarSaleInfo(@RequestBody Car car,
-                               @RequestParam long price,
+                               @RequestParam int price,
                                @RequestParam String contact) {
         long id = service.addCar(car, price, contact);
         log.info("Car sale info was created [carSaleInfo: id: {},{},price: {}, contact: {};]", id, car, price, contact);

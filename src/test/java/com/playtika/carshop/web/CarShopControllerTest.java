@@ -20,9 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CarShopControllerTest {
     @Mock
     private CarService service;
-
     private CarShopController controller;
-
     private MockMvc mockMvc;
 
     @Before

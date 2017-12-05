@@ -1,24 +1,31 @@
 package com.playtika.carshop.dao.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "cars_shop")
-@Data
+@Entity
+@Table(name = "cars_shop")
+@NoArgsConstructor
+@Getter
+@Setter
 public class CarShopEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-    private long price;
+    private Long id;
+    private int price;
 
     @OneToOne(cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = "car_id")
     private CarEntity car;
 
     @ManyToOne(cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = "person_id")
     private PersonEntity person;
 
+    public CarShopEntity(CarEntity car, int price, PersonEntity person) {
+        this.price = price;
+        this.car = car;
+        this.person = person;
+    }
 }

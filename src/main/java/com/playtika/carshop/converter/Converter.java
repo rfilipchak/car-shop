@@ -6,25 +6,13 @@ import com.playtika.carshop.dao.entity.PersonEntity;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collection;
+@Component
 @NoArgsConstructor
-public  class Converter {
-    @NonNull
-    private Car car;
-    @NonNull
-    private long price;
-    @NonNull
-    private String contact;
-
-    private CarShopEntity domeinToCarShopEntity(Car car, long price, String contact) {
-
-        CarShopEntity carShopEntity = new CarShopEntity();
-        carShopEntity.setCar(domainToCarEntity(car));
-        carShopEntity.setPerson(domainToPersonEntity(contact));
-        carShopEntity.setPrice(price);
-        return carShopEntity;
-    }
+public class Converter {
 
     public CarEntity domainToCarEntity(Car car) {
         CarEntity carEntity = new CarEntity();
@@ -42,13 +30,17 @@ public  class Converter {
     }
 
     public CarSaleInfo carShopEntityToCarSaleInfo(CarShopEntity car) {
-        if (car != null) {
         return new CarSaleInfo(car.getId(),
                 new Car(car.getCar().getBrand(), car.getCar().getYear()
                         , car.getCar().getRegistration(), car.getCar().getColor())
                 , car.getPrice(), car.getPerson().getContact());
-        } else {
-            return null;
+    }
+
+    public Collection<CarSaleInfo> carShopEntitiesToCarSaleInfoList(Collection<CarShopEntity> list) {
+        Collection<CarSaleInfo> carSaleInfos = new ArrayList<>();
+        for (CarShopEntity carShopEntity : list) {
+            carSaleInfos.add(carShopEntityToCarSaleInfo(carShopEntity));
         }
+        return carSaleInfos;
     }
 }

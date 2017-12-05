@@ -13,17 +13,17 @@ CREATE TABLE person
 
 CREATE TABLE cars_shop
 	(id BIGINT AUTO_INCREMENT PRIMARY KEY,
-	person_id BIGINT,
-	car_id BIGINT UNIQUE ,
-	price BIGINT NOT NULL,
+	person_id BIGINT NOT NULL ,
+	car_id BIGINT UNIQUE NOT NULL ,
+	price INT NOT NULL,
 	FOREIGN KEY (person_id) REFERENCES person (id),
 	FOREIGN KEY (car_id) REFERENCES cars (id)
 	);
 	
 CREATE TABLE deals
 	(id BIGINT AUTO_INCREMENT PRIMARY KEY,
-	car_for_sale_id BIGINT,
-	person_id BIGINT,
+	car_for_sale_id BIGINT NOT NULL ,
+	person_id BIGINT NOT NULL,
 	buyer_price BIGINT NOT NULL,
 	status VARCHAR (200)NOT NULL,
 	FOREIGN KEY (person_id) REFERENCES person (id),

@@ -6,12 +6,11 @@ import lombok.NonNull;
 @Data
 public class CarSaleInfo {
     @NonNull
-    private final Long id;
+    private final long id;
     @NonNull
     private final Car car;
     @NonNull
-    private final long price;
+    private final int price;
     @NonNull
     private final String contact;
-
 }

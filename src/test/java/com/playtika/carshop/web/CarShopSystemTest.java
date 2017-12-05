@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CarShopSystemTest {
     @Autowired
     private WebApplicationContext context;
-
     private MockMvc mockMvc;
 
     @Before
@@ -39,12 +38,11 @@ public class CarShopSystemTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$[0].car.registration").value("R122"))
-                .andExpect(jsonPath("$[0].person.contact").value("Yura"));
+                .andExpect(jsonPath("$[0].contact").value("Yura"));
     }
 
     @Test
     public void shouldReturnCarByIdSuccessfullyForSystemContext() throws Exception {
-
         this.mockMvc.perform(get("/cars/" + addNewCar("Sveta","R121")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -56,7 +54,6 @@ public class CarShopSystemTest {
 
     @Test
     public void shouldRemoveCarByIdSuccessfullyForSystemContext() throws Exception {
-
         this.mockMvc.perform(delete("/cars/" + addNewCar("Oleg","R120")))
                 .andExpect(status().isOk());
     }

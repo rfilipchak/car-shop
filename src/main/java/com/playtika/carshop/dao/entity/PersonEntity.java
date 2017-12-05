@@ -1,14 +1,21 @@
 package com.playtika.carshop.dao.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Entity(name = "person")
-@Data
+@Entity
+@Table(name = "person")
+@NoArgsConstructor
+@Getter
+@Setter
 public class PersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-    private  String contact;
+    private Long id;
+    private String contact;
+
+    public PersonEntity(String contact) {
+        this.contact = contact;
+    }
 }

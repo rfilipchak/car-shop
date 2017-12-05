@@ -1,32 +1,30 @@
 package com.playtika.carshop.dao.entity;
 
-import com.playtika.carshop.dao.entity.status.CarStatus;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Entity(name = "deals")
-@Data
+@Entity
+@Table(name = "deals")
+@NoArgsConstructor
+@Getter
+@Setter
 public class DealEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
-    private long id;
-
-    @Column(name = "buyer_price")
+    private Long id;
     private long buyerPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private CarStatus status = CarStatus.Active;
+    private CarStatus status = CarStatus.ACTIVE;
 
     @ManyToOne
     @JoinColumn(name = "car_for_sale_id")
     private CarShopEntity carShopEntity;
 
     @ManyToOne
-    @JoinColumn(name = "person_id")
     private PersonEntity person;
 
 

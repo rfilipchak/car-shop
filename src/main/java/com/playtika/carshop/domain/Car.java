@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class Car {
-
     @NonNull
     private final String brand;
     @NonNull

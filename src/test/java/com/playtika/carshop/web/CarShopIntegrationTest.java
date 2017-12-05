@@ -38,7 +38,7 @@ public class CarShopIntegrationTest {
     public void shouldCreateANewCarSuccessfully() throws Exception {
         long createdCarId = 1L;
         Car car = new Car("Ford", 2017,"AA-0177-BH", "black");
-        long price = 200000;
+        int price = 200000;
         String contact = "contact";
         when(service.addCar(car, price, contact)).thenReturn(createdCarId);
 
@@ -51,6 +51,7 @@ public class CarShopIntegrationTest {
         Long id = Long.parseLong(result);
         assertThat(id).isNotNull().isEqualTo(1L);
     }
+
     @Test
     public void shouldFailCreatingANewCarWithMissingParams() throws Exception {
         mockMvc.perform(post("/cars")

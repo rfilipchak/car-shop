@@ -8,14 +8,11 @@ import java.util.Optional;
 
 public interface CarService {
 
-    long addCar(Car car, long price, String contact);
+    long addCar(Car car, int price, String contact);
 
     Collection<CarSaleInfo> getCars();
 
-    Optional<CarSaleInfo> getCar(Long id);
+    Optional<CarSaleInfo> getCar(long id);
 
-    boolean removeCar(Long id);
-
-    Collection<Car> getAllCars();//for test
-
+    boolean removeCar(long id);
 }

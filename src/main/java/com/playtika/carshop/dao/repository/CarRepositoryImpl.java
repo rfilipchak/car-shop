@@ -3,8 +3,6 @@ package com.playtika.carshop.dao.repository;
 import com.playtika.carshop.dao.entity.CarEntity;
 import com.playtika.carshop.dao.entity.CarShopEntity;
 import com.playtika.carshop.dao.entity.PersonEntity;
-import com.playtika.carshop.domain.Car;
-import com.playtika.carshop.domain.CarSaleInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,34 +11,34 @@ import java.util.Collection;
 
 @Repository
 @AllArgsConstructor
-public class CarRepJpaImpl implements CarRepJpa {
+public class CarRepositoryImpl implements CarRepository {
 
     @PersistenceContext
     private EntityManager em;
 
     @Override
-    public long addCarSaleInfo(CarEntity c, PersonEntity p, Long price) {
+    public long addCarSaleInfo(CarEntity car, PersonEntity person, int price) {
         CarShopEntity carShopEntity = new CarShopEntity();
-        carShopEntity.setCar(checkCarForExist(c));
-        carShopEntity.setPerson(checkPersonForExsist(p));
+        carShopEntity.setCar(checkCarForExist(car));
+        carShopEntity.setPerson(checkPersonForExsist(person));
         carShopEntity.setPrice(price);
         em.persist(carShopEntity);
         return carShopEntity.getId();
     }
 
     @Override
-    public Collection<CarSaleInfo> getCars() {
-        Query query = em.createQuery("SELECT cs FROM cars_shop cs");
-        return (Collection<CarSaleInfo>) query.getResultList();
+    public Collection<CarShopEntity> getCars() {
+        Query query = em.createQuery("SELECT cs FROM CarShopEntity cs");
+        return (Collection<CarShopEntity>) query.getResultList();
     }
 
     @Override
-    public CarShopEntity getCar(Long id) {
+    public CarShopEntity getCar(long id) {
         return em.find(CarShopEntity.class, id);
     }
 
     @Override
-    public boolean removeCar(Long id) {
+    public boolean removeCar(long id) {
         if (getCar(id) != null) {
             em.remove(getCar(id));
             return true;
@@ -48,35 +46,29 @@ public class CarRepJpaImpl implements CarRepJpa {
         return false;
     }
 
-    @Override
-    public Collection<Car> getAllCars() {
-        Query query = em.createQuery("SELECT c FROM cars c");
-        return (Collection<Car>) query.getResultList();
-    }
-
-    private CarEntity checkCarForExist(CarEntity c) {
-        String registr = c.getRegistration();
+    private CarEntity checkCarForExist(CarEntity car) {
+        String registration = car.getRegistration();
         TypedQuery<Long> query = em.createQuery(
-                "SELECT id FROM cars WHERE registration = :registr", Long.class);
-        query.setParameter("registr", registr);
+                "SELECT id FROM CarEntity WHERE registration = :registration", Long.class);
+        query.setParameter("registration", registration);
         try {
             Long id = query.getSingleResult();
             return em.find(CarEntity.class, id);
         } catch (NoResultException e) {
-            return c;
+            return car;
         }
     }
 
-    private PersonEntity checkPersonForExsist(PersonEntity p) {
-        String contact = p.getContact();
+    private PersonEntity checkPersonForExsist(PersonEntity person) {
+        String contact = person.getContact();
         TypedQuery<Long> query = em.createQuery(
-                "SELECT id FROM person WHERE contact = :contact", Long.class);
+                "SELECT id FROM PersonEntity WHERE contact = :contact", Long.class);
         query.setParameter("contact", contact);
         try {
             Long id = query.getSingleResult();
             return em.find(PersonEntity.class, id);
         } catch (NoResultException e) {
-            return p;
+            return person;
         }
     }
 }
