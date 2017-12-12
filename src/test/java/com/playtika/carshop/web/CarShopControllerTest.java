@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(MockitoJUnitRunner.class)
 public class CarShopControllerTest {
+
     @Mock
     private CarService service;
     private CarShopController controller;

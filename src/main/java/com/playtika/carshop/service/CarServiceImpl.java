@@ -1,8 +1,12 @@
 package com.playtika.carshop.service;
 
 import com.playtika.carshop.converter.Converter;
+import com.playtika.carshop.dao.entity.CarEntity;
 import com.playtika.carshop.dao.entity.CarShopEntity;
-import com.playtika.carshop.dao.repository.CarRepository;
+import com.playtika.carshop.dao.entity.PersonEntity;
+import com.playtika.carshop.dao.CarDao;
+import com.playtika.carshop.dao.CarShopDao;
+import com.playtika.carshop.dao.PersonDao;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,30 +21,35 @@ import java.util.Optional;
 @Transactional
 public class CarServiceImpl implements CarService {
 
-    private final CarRepository carRepository;
     private final Converter converter;
+    private final CarDao carDao;
+    private final CarShopDao carShopDao;
+    private final PersonDao personDao;
 
     @Autowired
-    public CarServiceImpl(CarRepository carRepository, Converter converter) {
-        this.carRepository = carRepository;
+    public CarServiceImpl(Converter converter, CarDao carDao, CarShopDao carShopDao, PersonDao personDao) {
         this.converter = converter;
+        this.carDao = carDao;
+        this.carShopDao = carShopDao;
+        this.personDao = personDao;
     }
 
     @Override
     public long addCar(Car car, int price, String contact) {
-        return carRepository.addCarSaleInfo(converter.domainToCarEntity(car),
-                converter.domainToPersonEntity(contact), price);
+        CarShopEntity carShopEntity = new CarShopEntity(checkCarForExist(car),
+                price, checkPersonForExsist(contact));
+        return carShopDao.save(carShopEntity).getId();
     }
 
     @Override
     public Collection<CarSaleInfo> getCars() {
-        return converter.carShopEntitiesToCarSaleInfoList(carRepository.getCars());
+        return converter.carShopEntitiesToCarSaleInfoList(carShopDao.findAll());
     }
 
     @Override
     public Optional<CarSaleInfo> getCar(long id) {
-        CarShopEntity carShopEntity = carRepository.getCar(id);
-        if(carShopEntity != null) {
+        CarShopEntity carShopEntity = carShopDao.findCarShopEntitiesById(id);
+        if (carShopEntity != null) {
             return Optional.of(converter.carShopEntityToCarSaleInfo(carShopEntity));
         }
         return Optional.empty();
@@ -48,6 +57,30 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public boolean removeCar(long id) {
-        return carRepository.removeCar(id);
+        if (carShopDao.exists(id)) {
+            carShopDao.delete(id);
+            return true;
+        }
+        return false;
+    }
+
+    private CarEntity checkCarForExist(Car car) {
+        CarEntity existCar = carDao.getCarEntitiesByRegistration(car.getRegistration());
+        if (existCar != null) {
+            return existCar;
+        }
+        CarEntity carEntity = converter.domainToCarEntity(car);
+        carDao.save(carEntity);
+        return carEntity;
+    }
+
+    private PersonEntity checkPersonForExsist(String contact) {
+        PersonEntity existPerson = personDao.getPersonEntityByContact(contact);
+        if (existPerson != null) {
+            return existPerson;
+        }
+        PersonEntity personEntity = converter.domainToPersonEntity(contact);
+        personDao.save(personEntity);
+        return personEntity;
     }
 }

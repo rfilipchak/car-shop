@@ -1,8 +1,6 @@
 package com.playtika.carshop.dao.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -24,6 +22,12 @@ public class CarShopEntity {
     private PersonEntity person;
 
     public CarShopEntity(CarEntity car, int price, PersonEntity person) {
+        this.price = price;
+        this.car = car;
+        this.person = person;
+    }
+    public CarShopEntity(Long id,CarEntity car, int price, PersonEntity person) {
+        this.id = id;
         this.price = price;
         this.car = car;
         this.person = person;

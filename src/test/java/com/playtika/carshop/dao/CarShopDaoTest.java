@@ -1,0 +1,100 @@
+package com.playtika.carshop.dao;
+
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.core.api.dataset.ExpectedDataSet;
+import com.google.common.collect.ImmutableMap;
+import com.playtika.carshop.dao.entity.CarShopEntity;
+import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.test.annotation.Commit;
+
+import java.util.Collections;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
+import static org.junit.Assert.assertThat;
+
+public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
+
+    @Test
+    public void shouldReturnNullWhetCarsInShopDoesNotExist() {
+        assertThat(dao.findCarShopEntitiesById(1L), nullValue());
+    }
+
+    @Test
+    @DataSet(value = "saved-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouldReturnCarShopItemById() {
+        long id = 1L;
+        String registration = "AA-0177-BH";
+        int price = 2000;
+        String contact = "contact";
+
+        assertThat(dao.findCarShopEntitiesById(id).getCar().getRegistration(),
+                samePropertyValuesAs(registration));
+        assertThat(dao.findCarShopEntitiesById(id).getPrice(),
+                samePropertyValuesAs(price));
+        assertThat(dao.findCarShopEntitiesById(id).getPerson().getContact(),
+                samePropertyValuesAs(contact));
+    }
+
+    @Test
+    @DataSet(value = "empty-car-shop.xml")
+    @ExpectedDataSet(value = "expected-car-shop-item.xml")
+    @Commit
+    public void shoulAddCarShopItem() {
+        addCarToCarsDb(1,2000,1);
+    }
+
+    @Test
+    @DataSet(value = "saved-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouldRemoveCarShopItemById() {
+        dao.delete(1L);
+
+        assertThat(dao.exists(1L), is(false));
+    }
+
+    @Test
+    @DataSet(value = "expected-car-shop-item.xml")
+    @ExpectedDataSet(value = "empty-car-shop.xml")
+    @Commit
+    public void shoulNotRemoveCarAndPersonAfterRemoveCarShopItem() {
+        dao.delete(1L);
+
+        assertThat(dao.exists(1L), is(false));
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    @DataSet(value = "empty-car-shop.xml")
+    public void shouldNotAddCarShopItemWithTheSameCar() {
+        long carId = 1L;
+        int price = 2000;
+        long personId = 1L;
+        addCarToCarsDb(carId, price, personId);
+        addCarToCarsDb(carId, price, personId);
+    }
+
+    @Test
+    @DataSet(value = "default-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouldGetAllCarShopItems() {
+        List<CarShopEntity> cars = dao.findAll();
+
+        assertThat(cars.size(), is(2));
+        assertThat(cars.get(0).getCar().getRegistration(), samePropertyValuesAs("AA-0177-BH"));
+        assertThat(cars.get(1).getCar().getRegistration(), samePropertyValuesAs("AA-0188-BH"));
+        assertThat(cars.get(0).getPrice(), samePropertyValuesAs(2000));
+        assertThat(cars.get(1).getPrice(), samePropertyValuesAs(3000));
+    }
+
+    @Test
+    @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouidGetEmptyIfDbIsEmpty() {
+        assertThat(dao.findAll(), is(Collections.EMPTY_LIST));
+    }
+
+    private long addCarToCarsDb(long carId, int price, long personId) {
+        return addRecordToDb("cars_shop", ImmutableMap.of("car_id", carId,
+                "price", price, "person_id", personId));
+    }
+}
