@@ -15,18 +15,12 @@ import java.util.Collection;
 public class Converter {
 
     public CarEntity domainToCarEntity(Car car) {
-        CarEntity carEntity = new CarEntity();
-        carEntity.setBrand(car.getBrand());
-        carEntity.setYear(car.getYear());
-        carEntity.setRegistration(car.getRegistration());
-        carEntity.setColor(car.getColor());
-        return carEntity;
+        return new CarEntity(car.getBrand(),
+                car.getYear(), car.getRegistration(), car.getColor());
     }
 
     public PersonEntity domainToPersonEntity(String contact) {
-        PersonEntity personEntity = new PersonEntity();
-        personEntity.setContact(contact);
-        return personEntity;
+        return new PersonEntity(contact);
     }
 
     public CarSaleInfo carShopEntityToCarSaleInfo(CarShopEntity car) {

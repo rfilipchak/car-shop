@@ -1,12 +1,12 @@
 package com.playtika.carshop.service;
 
 import com.playtika.carshop.converter.Converter;
-import com.playtika.carshop.dao.entity.CarEntity;
-import com.playtika.carshop.dao.entity.CarShopEntity;
-import com.playtika.carshop.dao.entity.PersonEntity;
 import com.playtika.carshop.dao.CarDao;
 import com.playtika.carshop.dao.CarShopDao;
 import com.playtika.carshop.dao.PersonDao;
+import com.playtika.carshop.dao.entity.CarEntity;
+import com.playtika.carshop.dao.entity.CarShopEntity;
+import com.playtika.carshop.dao.entity.PersonEntity;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
-
 
 @Service
 @Transactional
@@ -48,7 +47,7 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public Optional<CarSaleInfo> getCar(long id) {
-        CarShopEntity carShopEntity = carShopDao.findCarShopEntitiesById(id);
+        CarShopEntity carShopEntity = carShopDao.findOne(id);
         if (carShopEntity != null) {
             return Optional.of(converter.carShopEntityToCarSaleInfo(carShopEntity));
         }

@@ -1,6 +1,9 @@
 package com.playtika.carshop.dao.entity;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -9,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class PersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

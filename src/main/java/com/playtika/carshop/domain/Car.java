@@ -1,12 +1,11 @@
 package com.playtika.carshop.domain;
 
-import lombok.Data;
 import lombok.NonNull;
+import lombok.Value;
 
 import javax.validation.constraints.NotNull;
 
-
-@Data
+@Value
 public class Car {
     @NonNull
     private final String brand;

@@ -20,39 +20,49 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
 
     @Test
     public void shouldReturnNullWhetCarsInShopDoesNotExist() {
-        assertThat(dao.findCarShopEntitiesById(1L), nullValue());
+        CarShopEntity notExistingCarShopItem = dao.findOne(1L);
+
+        assertThat(notExistingCarShopItem, nullValue());
     }
 
     @Test
-    @DataSet(value = "saved-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    @DataSet(value = "expected-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
     public void shouldReturnCarShopItemById() {
         long id = 1L;
         String registration = "AA-0177-BH";
         int price = 2000;
         String contact = "contact";
 
-        assertThat(dao.findCarShopEntitiesById(id).getCar().getRegistration(),
+        CarShopEntity carShopEntitiesById = dao.findOne(id);
+
+        assertThat(carShopEntitiesById.getCar().getRegistration(),
                 samePropertyValuesAs(registration));
-        assertThat(dao.findCarShopEntitiesById(id).getPrice(),
+        assertThat(carShopEntitiesById.getPrice(),
                 samePropertyValuesAs(price));
-        assertThat(dao.findCarShopEntitiesById(id).getPerson().getContact(),
+        assertThat(carShopEntitiesById.getPerson().getContact(),
                 samePropertyValuesAs(contact));
     }
 
     @Test
-    @DataSet(value = "empty-car-shop.xml")
+    @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
     @ExpectedDataSet(value = "expected-car-shop-item.xml")
     @Commit
     public void shoulAddCarShopItem() {
-        addCarToCarsDb(1,2000,1);
+        long id = addCarToCarsDb(1, 2000, 1);
+
+        boolean result = dao.exists(id);
+
+        assertThat(result,is(true));
     }
 
     @Test
-    @DataSet(value = "saved-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    @DataSet(value = "expected-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
     public void shouldRemoveCarShopItemById() {
         dao.delete(1L);
 
-        assertThat(dao.exists(1L), is(false));
+        boolean result = dao.exists(1L);
+
+        assertThat(result, is(false));
     }
 
     @Test
@@ -62,7 +72,32 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     public void shoulNotRemoveCarAndPersonAfterRemoveCarShopItem() {
         dao.delete(1L);
 
-        assertThat(dao.exists(1L), is(false));
+        boolean result = dao.exists(1L);
+
+        assertThat(result, is(false));
+    }
+
+    @Test
+    @DataSet(value = "default-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouldGetAllCarShopItems() {
+        List<CarShopEntity> cars = dao.findAll();
+
+        CarShopEntity second = cars.get(1);
+        CarShopEntity first = cars.get(0);
+
+        assertThat(cars.size(), is(2));
+        assertThat(first.getCar().getRegistration(), samePropertyValuesAs("AA-0177-BH"));
+        assertThat(second.getCar().getRegistration(), samePropertyValuesAs("AA-0188-BH"));
+        assertThat(first.getPrice(), samePropertyValuesAs(2000));
+        assertThat(second.getPrice(), samePropertyValuesAs(3000));
+    }
+
+    @Test
+    @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
+    public void shouidGetEmptyIfDbIsEmpty() {
+        List<CarShopEntity> allCarShopItem = dao.findAll();
+
+        assertThat(allCarShopItem, is(Collections.EMPTY_LIST));
     }
 
     @Test(expected = DuplicateKeyException.class)
@@ -71,26 +106,14 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
         long carId = 1L;
         int price = 2000;
         long personId = 1L;
-        addCarToCarsDb(carId, price, personId);
-        addCarToCarsDb(carId, price, personId);
-    }
+        long firstId = addCarToCarsDb(carId, price, personId);
+        long secondId =addCarToCarsDb(carId, price, personId);
 
-    @Test
-    @DataSet(value = "default-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
-    public void shouldGetAllCarShopItems() {
-        List<CarShopEntity> cars = dao.findAll();
+        boolean first = dao.exists(firstId);
+        boolean second = dao.exists(secondId);
 
-        assertThat(cars.size(), is(2));
-        assertThat(cars.get(0).getCar().getRegistration(), samePropertyValuesAs("AA-0177-BH"));
-        assertThat(cars.get(1).getCar().getRegistration(), samePropertyValuesAs("AA-0188-BH"));
-        assertThat(cars.get(0).getPrice(), samePropertyValuesAs(2000));
-        assertThat(cars.get(1).getPrice(), samePropertyValuesAs(3000));
-    }
-
-    @Test
-    @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
-    public void shouidGetEmptyIfDbIsEmpty() {
-        assertThat(dao.findAll(), is(Collections.EMPTY_LIST));
+        assertThat(first,is(true));
+        assertThat(second,is(false));
     }
 
     private long addCarToCarsDb(long carId, int price, long personId) {

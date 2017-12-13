@@ -4,5 +4,4 @@ import com.playtika.carshop.dao.entity.CarShopEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CarShopDao extends JpaRepository<CarShopEntity,Long> {
-    CarShopEntity findCarShopEntitiesById(long id);
 }

@@ -6,7 +6,6 @@ import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -17,15 +16,11 @@ import java.util.stream.Stream;
 @DataJpaTest
 public class AbstractDaoTest<D> {
     private static long ID = 1;
-
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
     @Rule
     public DBUnitRule dbUnitRule = DBUnitRule.instance(() -> jdbcTemplate.getDataSource().getConnection());
-
-    @Autowired
-    protected TestEntityManager em;
 
     @Autowired
     protected D dao;
