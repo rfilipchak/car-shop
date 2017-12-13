@@ -1,0 +1,14 @@
+ CREATE TABLE cars
+     (id INT AUTO_INCREMENT PRIMARY KEY ,
+      brand VARCHAR(20) NOT NULL,
+	  car_year INT NOT NULL
+	 );
+
+CREATE TABLE car_deallers
+	(id INT AUTO_INCREMENT PRIMARY KEY,
+	price INT NOT NULL,
+	contact VARCHAR(100) NOT NULL,
+	car_id INT NOT NULL ,
+	FOREIGN KEY (car_id) REFERENCES cars (id)
+	);
+
