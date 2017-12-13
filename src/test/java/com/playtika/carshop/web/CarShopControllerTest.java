@@ -1,5 +1,6 @@
 package com.playtika.carshop.web;
 
+import com.playtika.carshop.domain.CarSaleInfo;
 import com.playtika.carshop.service.CarService;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +63,10 @@ public class CarShopControllerTest {
     @Test
     public void shouldReturnEmptyListIfWhereNoAddedCars() throws Exception {
         when(service.getCars()).thenReturn(Collections.emptyList());
-        assertThat(controller.getAllCars()).isEmpty();
+
+        Collection<CarSaleInfo> allCars = controller.getAllCars();
+
+        assertThat(allCars).isEmpty();
     }
 
     @Test

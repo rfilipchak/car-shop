@@ -1,6 +1,5 @@
 package com.playtika.carshop.dao;
 
-import com.google.common.collect.ImmutableMap;
 import com.playtika.carshop.dao.entity.PersonEntity;
 import org.junit.Test;
 
@@ -12,21 +11,25 @@ public class PersonDaoTest extends AbstractDaoTest<PersonDao> {
 
     @Test
     public void shouldReturnNullWhenPersonDoesNotExist() {
-        assertThat(dao.getPersonEntityByContact("unknown"), nullValue());
+        PersonEntity notExistingPerson = dao.getPersonEntityByContact("unknown");
+
+        assertThat(notExistingPerson, nullValue());
     }
 
     @Test
     public void shouldReturnPersonEntityByContact() {
-        String person = "contact";
-        addPersonToPersonDb(person);
-        PersonEntity personToCompare = new PersonEntity(person);
+        String contact = "contact";
+        long id = addPersonToPersonDb(contact);
+        PersonEntity expectedPerson = new PersonEntity(contact);
+        expectedPerson.setId(id);
 
-        assertThat(dao.getPersonEntityByContact(person).getContact(),
-                samePropertyValuesAs(personToCompare.getContact()));
+        PersonEntity person = dao.getPersonEntityByContact(contact);
+
+        assertThat(person, samePropertyValuesAs(expectedPerson));
     }
 
     private long addPersonToPersonDb(String contact) {
-        return addRecordToDb("person", ImmutableMap.of("contact", contact));
+        PersonEntity person = new PersonEntity(contact);
+        return dao.save(person).getId();
     }
-
 }

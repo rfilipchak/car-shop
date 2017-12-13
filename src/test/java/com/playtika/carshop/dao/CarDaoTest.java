@@ -1,9 +1,8 @@
 package com.playtika.carshop.dao;
 
-import com.google.common.collect.ImmutableMap;
 import com.playtika.carshop.dao.entity.CarEntity;
 import org.junit.Test;
-import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
@@ -13,34 +12,38 @@ public class CarDaoTest extends AbstractDaoTest<CarDao> {
 
     @Test
     public void shouldReturnNullWhenCarDoesNotExist() {
-        assertThat(dao.getCarEntitiesByRegistration("unknown"), nullValue());
+        CarEntity notExistingCar = dao.getCarEntitiesByRegistration("unknown");
+
+        assertThat(notExistingCar, nullValue());
     }
 
     @Test
     public void shouldReturnIdAfterAddingCarToCars() {
-        long id = addCarToCarsDb("AA-0177-BH", "BMW", 1980, "black");
+        long id = addCarToCarsDb("AA-0177-BH");
 
         assertThat(id, is(notNullValue()));
     }
 
     @Test
-    public void shouldFindCarByRegistration(){
+    public void shouldFindCarByRegistration() {
         String registration = "AA-0177-BH";
-        long id = addCarToCarsDb(registration, "BMW", 1980, "black");
-        CarEntity carToCompare = new CarEntity("AA-0177-BH", "BMW", 1980, "black");
-        carToCompare.setId(id);
+        long id = addCarToCarsDb(registration);
+        CarEntity expectedCar = new CarEntity("BMW", 1980, "AA-0177-BH", "black");
+        expectedCar.setId(id);
 
-        assertThat(dao.getCarEntitiesByRegistration(registration), samePropertyValuesAs(carToCompare));
+        CarEntity car = dao.getCarEntitiesByRegistration(registration);
+
+        assertThat(car, samePropertyValuesAs(expectedCar));
     }
 
-    @Test(expected = DuplicateKeyException.class)
-    public void shouldNotAddTheSameCar(){
-        addCarToCarsDb("AA-0177-BH", "BMW", 1980, "black");
-        addCarToCarsDb("AA-0177-BH", "BMW", 1980, "black");
+    @Test(expected = DataIntegrityViolationException.class)
+    public void shouldNotAddTheSameCarToCars() {
+        addCarToCarsDb("AA-0177-BH");
+        addCarToCarsDb("AA-0177-BH");
     }
 
-    private long addCarToCarsDb(String registration, String brand, int year, String color) {
-        return addRecordToDb("cars", ImmutableMap.of("registration", registration,
-                "brand", brand, "car_year", year, "color", color));
+    private long addCarToCarsDb(String registration) {
+        CarEntity car = new CarEntity("BMW", 1980, registration, "black");
+        return dao.save(car).getId();
     }
 }

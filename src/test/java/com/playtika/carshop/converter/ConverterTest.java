@@ -8,57 +8,66 @@ import com.playtika.carshop.domain.CarSaleInfo;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConverterTest {
 
-    Converter converter = new Converter();
+    private Converter converter = new Converter();
 
     @Test
-    public void shouldConvertDomainToCarEntity(){
+    public void shouldConvertDomainToCarEntity() {
         Car bmw = new Car("BMW", 2017, "AA-0177-BH", "black");
-        CarEntity bmwToCompare = new CarEntity("AA-0177-BH", "BMW", 2017, "black");
+        CarEntity bmwToCompare = new CarEntity("BMW", 2017, "AA-0177-BH", "black");
 
-        assertThat(converter.domainToCarEntity(bmw).getRegistration()).isEqualTo(bmwToCompare.getRegistration());
-        assertThat(converter.domainToCarEntity(bmw).getBrand()).isEqualTo(bmwToCompare.getBrand());
+        CarEntity bmwEntity = converter.domainToCarEntity(bmw);
+
+        assertThat(bmwEntity).isEqualTo(bmwToCompare);
     }
 
     @Test
-    public void shouldConvertDomainToPersonEntity(){
+    public void shouldConvertDomainToPersonEntity() {
         String contact = "contact";
-        PersonEntity contactEntityToCompare = new PersonEntity("contact");
+        PersonEntity personToCompare = new PersonEntity(contact);
+        
+        PersonEntity person = converter.domainToPersonEntity(contact);
 
-        assertThat(converter.domainToPersonEntity(contact).getContact())
-                .isEqualTo(contact);
+        assertThat(person).isEqualTo(personToCompare);
     }
 
     @Test
-    public void shouldConvertCarShopEntityToCarSaleInfo(){
-        CarSaleInfo bmwToCompare = new CarSaleInfo(1L, new Car("BMW", 2017, "AA-0177-BH", "black"),
-                2000, "contact");
-        CarShopEntity bmw = new CarShopEntity(1L, new CarEntity("AA-0177-BH", "BMW", 2017, "black"),
-                2000, new PersonEntity("contact"));
+    public void shouldConvertCarShopEntityToCarSaleInfo() {
+        CarSaleInfo expectedCar = generateCarSaleInfo(1L,"AA-0177-BH");
+        CarShopEntity car = generateCarShopEntity(1L,"AA-0177-BH");
 
-        assertThat(converter.carShopEntityToCarSaleInfo(bmw)).isEqualTo(bmwToCompare);
+        CarSaleInfo carDomain = converter.carShopEntityToCarSaleInfo(car);
+        
+        assertThat(carDomain).isEqualTo(expectedCar);
     }
 
     @Test
-    public void shouldConvertCarShopEntitiesToCarSaleInfoList(){
-        CarShopEntity bmw = new CarShopEntity(1L, new CarEntity("AA-0177-BH", "BMW", 2017, "black"),
-                2000, new PersonEntity("contact"));
-        CarShopEntity ford = new CarShopEntity(2L,
-                new CarEntity("AA-0178-BH", "Ford", 2017, "black"),
-                2000, new PersonEntity("contact"));
-        CarSaleInfo bmwToCompare = new CarSaleInfo(1L, new Car("BMW", 2017, "AA-0177-BH", "black"),
-                2000, "contact");
-        CarSaleInfo fordToCompare = new CarSaleInfo(2L, new Car("Ford", 2017, "AA-0178-BH", "black"),
-                2000, "contact");
-        List<CarShopEntity> carShopEntities = Arrays.asList(bmw,ford);
-        List<CarSaleInfo> carSaleInfos = Arrays.asList(bmwToCompare,fordToCompare);
+    public void shouldConvertCarShopEntitiesToCarSaleInfoList() {
+        CarShopEntity first = generateCarShopEntity(1L,"AA-0177-BH");
+        CarShopEntity second = generateCarShopEntity(2L,"AA-0178-BH");
 
-        assertThat(converter.carShopEntitiesToCarSaleInfoList(carShopEntities)).isEqualTo(carSaleInfos);
+        CarSaleInfo expectedFirst = generateCarSaleInfo(1L,"AA-0177-BH");
+        CarSaleInfo expectedSecond = generateCarSaleInfo(2L,"AA-0178-BH");
+        List<CarShopEntity> carShopEntities = Arrays.asList(first, second);
+        List<CarSaleInfo> carSaleInfos = Arrays.asList(expectedFirst, expectedSecond);
+
+        Collection<CarSaleInfo> carShopEntityToDomain = converter.carShopEntitiesToCarSaleInfoList(carShopEntities);
+
+        assertThat(carShopEntityToDomain).isEqualTo(carSaleInfos);
     }
 
+    private CarShopEntity generateCarShopEntity(long id, String registration){
+        return new CarShopEntity(id, new CarEntity("BMW", 2017, registration, "black"),
+                2000, new PersonEntity("contact"));
+    }
+    private CarSaleInfo generateCarSaleInfo(long id, String registration){
+        return new CarSaleInfo(id, new Car("BMW", 2017, registration, "black"),
+                2000, "contact");
+    }
 }

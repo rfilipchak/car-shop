@@ -8,7 +8,7 @@
 	 
 CREATE TABLE person
      (id BIGINT AUTO_INCREMENT PRIMARY KEY ,
-      contact VARCHAR(100)
+      contact VARCHAR(100)UNIQUE NOT NULL
 	 );
 
 CREATE TABLE cars_shop
