@@ -38,7 +38,7 @@ public class CarServiceWithConverterIntegrationTest {
         service = new CarServiceImpl(converter, carDao, carShopDao, personDao);
     }
 
-    @Test
+    @Test// - refEq(first, "id") - using in mock
     public void shouldReturnCarById() {
         long id = 1L;
         CarShopEntity bmw = new CarShopEntity(id, new CarEntity("BMW", 2017, "AA-0177-BH", "black"),

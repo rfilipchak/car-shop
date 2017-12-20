@@ -3,7 +3,9 @@ package com.playtika.carshop.dao;
 import com.playtika.carshop.dao.entity.PersonEntity;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.nullValue;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
@@ -11,19 +13,19 @@ public class PersonDaoTest extends AbstractDaoTest<PersonDao> {
 
     @Test
     public void shouldReturnNullWhenPersonDoesNotExist() {
-        PersonEntity notExistingPerson = dao.getPersonEntityByContact("unknown");
+        Optional<PersonEntity> notExistingPerson = dao.getPersonEntityByContact("unknown");
 
-        assertThat(notExistingPerson, nullValue());
+        assertThat(notExistingPerson, is(Optional.empty()));
     }
 
     @Test
     public void shouldReturnPersonEntityByContact() {
-        String contact = "contact";
+        String contact = "newContact";
         long id = addPersonToPersonDb(contact);
         PersonEntity expectedPerson = new PersonEntity(contact);
         expectedPerson.setId(id);
 
-        PersonEntity person = dao.getPersonEntityByContact(contact);
+        PersonEntity person = dao.getPersonEntityByContact(contact).get();
 
         assertThat(person, samePropertyValuesAs(expectedPerson));
     }

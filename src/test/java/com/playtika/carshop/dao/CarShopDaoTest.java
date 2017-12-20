@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
 
     @Test
+    @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
     public void shouldReturnNullWhetCarsInShopDoesNotExist() {
         CarShopEntity notExistingCarShopItem = dao.findOne(1L);
 
@@ -26,7 +27,7 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     }
 
     @Test
-    @DataSet(value = "expected-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    @DataSet(value = "expected--car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
     public void shouldReturnCarShopItemById() {
         long id = 1L;
         String registration = "AA-0177-BH";
@@ -45,9 +46,9 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
 
     @Test
     @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
-    @ExpectedDataSet(value = "expected-car-shop-item.xml")
+    @ExpectedDataSet(value = "expected--car-shop-item.xml")
     @Commit
-    public void shoulAddCarShopItem() {
+    public void shouldAddCarShopItem() {
         long id = addCarToCarsDb(1, 2000, 1);
 
         boolean result = dao.exists(id);
@@ -56,7 +57,7 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     }
 
     @Test
-    @DataSet(value = "expected-car-shop-item.xml", disableConstraints = true, useSequenceFiltering = false)
+    @DataSet(value = "expected-for-delet.xml", disableConstraints = true, useSequenceFiltering = false)
     public void shouldRemoveCarShopItemById() {
         dao.delete(1L);
 
@@ -66,10 +67,10 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     }
 
     @Test
-    @DataSet(value = "expected-car-shop-item.xml")
+    @DataSet(value = "expected-for-delet.xml")// убрал  айдишник из екп  дата сета
     @ExpectedDataSet(value = "empty-car-shop.xml")
     @Commit
-    public void shoulNotRemoveCarAndPersonAfterRemoveCarShopItem() {
+    public void shouldNotRemoveCarAndPersonAfterRemoveCarShopItem() {
         dao.delete(1L);
 
         boolean result = dao.exists(1L);
@@ -107,13 +108,13 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
         int price = 2000;
         long personId = 1L;
         long firstId = addCarToCarsDb(carId, price, personId);
-        long secondId =addCarToCarsDb(carId, price, personId);
+        long secondId = addCarToCarsDb(carId, price, personId);
 
         boolean first = dao.exists(firstId);
         boolean second = dao.exists(secondId);
 
-        assertThat(first,is(true));
-        assertThat(second,is(false));
+        assertThat(first, is(true));
+        assertThat(second, is(false));
     }
 
     private long addCarToCarsDb(long carId, int price, long personId) {

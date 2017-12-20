@@ -11,4 +11,12 @@ public class CarShopApplication {
 
 		SpringApplication.run(CarShopApplication.class, args);
 	}
+
+//	@Bean
+//	AuthorService authorService() {
+//		return Feign.builder()
+//				.decoder(new StringDecoder())
+//				.target(AuthorService.class, "https://localhost:8080");
+//	}
+
 }

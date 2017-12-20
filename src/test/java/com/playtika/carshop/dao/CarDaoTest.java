@@ -4,17 +4,22 @@ import com.playtika.carshop.dao.entity.CarEntity;
 import org.junit.Test;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import static org.hamcrest.CoreMatchers.*;
+import java.util.Optional;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
 public class CarDaoTest extends AbstractDaoTest<CarDao> {
 
+    //Save Car - to ADD
     @Test
     public void shouldReturnNullWhenCarDoesNotExist() {
-        CarEntity notExistingCar = dao.getCarEntitiesByRegistration("unknown");
-
-        assertThat(notExistingCar, nullValue());
+        Optional<CarEntity> notExistingCar = dao.getCarByRegistration("unknown");
+//        boolean carExisting = dao.getCarByRegistration("unknown").isPresent();
+//        assertThat(carExisting,is(false));
+        assertThat(notExistingCar,is(Optional.empty()));
     }
 
     @Test
@@ -31,7 +36,7 @@ public class CarDaoTest extends AbstractDaoTest<CarDao> {
         CarEntity expectedCar = new CarEntity("BMW", 1980, "AA-0177-BH", "black");
         expectedCar.setId(id);
 
-        CarEntity car = dao.getCarEntitiesByRegistration(registration);
+        CarEntity car = dao.getCarByRegistration(registration).get();
 
         assertThat(car, samePropertyValuesAs(expectedCar));
     }

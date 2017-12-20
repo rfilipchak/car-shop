@@ -9,7 +9,7 @@ import com.playtika.carshop.dao.entity.CarShopEntity;
 import com.playtika.carshop.dao.entity.PersonEntity;
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CarServiceImpl implements CarService {
 
     private final Converter converter;
@@ -25,13 +26,7 @@ public class CarServiceImpl implements CarService {
     private final CarShopDao carShopDao;
     private final PersonDao personDao;
 
-    @Autowired
-    public CarServiceImpl(Converter converter, CarDao carDao, CarShopDao carShopDao, PersonDao personDao) {
-        this.converter = converter;
-        this.carDao = carDao;
-        this.carShopDao = carShopDao;
-        this.personDao = personDao;
-    }
+//    private final AuthorService authorService;
 
     @Override
     public long addCar(Car car, int price, String contact) {
@@ -64,9 +59,9 @@ public class CarServiceImpl implements CarService {
     }
 
     private CarEntity checkCarForExist(Car car) {
-        CarEntity existCar = carDao.getCarEntitiesByRegistration(car.getRegistration());
-        if (existCar != null) {
-            return existCar;
+        Optional<CarEntity> existCar = carDao.getCarByRegistration(car.getRegistration());
+        if (existCar.isPresent()) {
+            return existCar.get();
         }
         CarEntity carEntity = converter.domainToCarEntity(car);
         carDao.save(carEntity);
@@ -74,9 +69,9 @@ public class CarServiceImpl implements CarService {
     }
 
     private PersonEntity checkPersonForExsist(String contact) {
-        PersonEntity existPerson = personDao.getPersonEntityByContact(contact);
-        if (existPerson != null) {
-            return existPerson;
+        Optional<PersonEntity> existPerson = personDao.getPersonEntityByContact(contact);
+        if (existPerson.isPresent()) {
+            return existPerson.get();
         }
         PersonEntity personEntity = converter.domainToPersonEntity(contact);
         personDao.save(personEntity);
