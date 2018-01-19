@@ -12,7 +12,7 @@ public class CarDaoTest extends AbstractDaoTest<CarDao> {
 
     @Test
     public void shouldReturnNullWhenCarDoesNotExist() {
-        CarEntity notExistingCar = dao.getCarEntitiesByRegistration("unknown");
+        CarEntity notExistingCar = dao.getCarByRegistration("unknown");
 
         assertThat(notExistingCar, nullValue());
     }
@@ -31,7 +31,7 @@ public class CarDaoTest extends AbstractDaoTest<CarDao> {
         CarEntity expectedCar = new CarEntity("BMW", 1980, "AA-0177-BH", "black");
         expectedCar.setId(id);
 
-        CarEntity car = dao.getCarEntitiesByRegistration(registration);
+        CarEntity car = dao.getCarByRegistration(registration);
 
         assertThat(car, samePropertyValuesAs(expectedCar));
     }

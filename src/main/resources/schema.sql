@@ -24,8 +24,8 @@ CREATE TABLE deals
 	(id BIGINT AUTO_INCREMENT PRIMARY KEY,
 	car_for_sale_id BIGINT NOT NULL ,
 	person_id BIGINT NOT NULL,
-	buyer_price BIGINT NOT NULL,
-	status VARCHAR (200)NOT NULL,
+	buyer_price INT NOT NULL,
+	deal_status VARCHAR (200)NOT NULL,
 	FOREIGN KEY (person_id) REFERENCES person (id),
 	FOREIGN KEY (car_for_sale_id) REFERENCES cars_shop (id)
 	);

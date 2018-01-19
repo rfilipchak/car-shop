@@ -1,4 +1,4 @@
-package com.playtika.carshop.service;
+package com.playtika.carshop.carshopservice;
 
 import com.playtika.carshop.converter.Converter;
 import com.playtika.carshop.dao.CarDao;

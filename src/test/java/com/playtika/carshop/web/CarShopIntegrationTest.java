@@ -2,7 +2,7 @@ package com.playtika.carshop.web;
 
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;
-import com.playtika.carshop.service.CarService;
+import com.playtika.carshop.carshopservice.CarService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

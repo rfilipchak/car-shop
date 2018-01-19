@@ -1,4 +1,4 @@
-package com.playtika.carshop.service;
+package com.playtika.carshop.carshopservice;
 
 import com.playtika.carshop.converter.Converter;
 import com.playtika.carshop.dao.CarDao;
@@ -36,7 +36,7 @@ public class CarServiceImpl implements CarService {
     @Override
     public long addCar(Car car, int price, String contact) {
         CarShopEntity carShopEntity = new CarShopEntity(checkCarForExist(car),
-                price, checkPersonForExsist(contact));
+                price, checkPersonForExist(contact));
         return carShopDao.save(carShopEntity).getId();
     }
 
@@ -64,7 +64,7 @@ public class CarServiceImpl implements CarService {
     }
 
     private CarEntity checkCarForExist(Car car) {
-        CarEntity existCar = carDao.getCarEntitiesByRegistration(car.getRegistration());
+        CarEntity existCar = carDao.getCarByRegistration(car.getRegistration());
         if (existCar != null) {
             return existCar;
         }
@@ -73,8 +73,8 @@ public class CarServiceImpl implements CarService {
         return carEntity;
     }
 
-    private PersonEntity checkPersonForExsist(String contact) {
-        PersonEntity existPerson = personDao.getPersonEntityByContact(contact);
+    public PersonEntity checkPersonForExist(String contact) {
+        PersonEntity existPerson = personDao.getPersonByContact(contact);
         if (existPerson != null) {
             return existPerson;
         }

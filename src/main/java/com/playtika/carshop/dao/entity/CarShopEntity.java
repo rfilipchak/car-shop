@@ -24,7 +24,7 @@ public class CarShopEntity {
     @ManyToOne(cascade = {CascadeType.PERSIST})
     private PersonEntity person;
 
-    public CarShopEntity(CarEntity car, int price, PersonEntity person) {
+     public CarShopEntity(CarEntity car, int price, PersonEntity person) {
         this.price = price;
         this.car = car;
         this.person = person;

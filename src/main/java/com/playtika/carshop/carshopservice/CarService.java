@@ -1,4 +1,4 @@
-package com.playtika.carshop.service;
+package com.playtika.carshop.carshopservice;
 
 import com.playtika.carshop.domain.Car;
 import com.playtika.carshop.domain.CarSaleInfo;

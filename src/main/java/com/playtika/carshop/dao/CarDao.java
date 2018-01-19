@@ -4,5 +4,5 @@ import com.playtika.carshop.dao.entity.CarEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CarDao extends JpaRepository<CarEntity, Long>{
-    CarEntity getCarEntitiesByRegistration(String registration);
+    CarEntity getCarByRegistration(String registration);
 }

@@ -1,9 +1,9 @@
 package com.playtika.carshop.domain;
 
+import lombok.Data;
 import lombok.NonNull;
-import lombok.Value;
 
-@Value
+@Data
 public class CarSaleInfo {
     @NonNull
     private final long id;

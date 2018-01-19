@@ -1,7 +1,8 @@
 package com.playtika.carshop.web;
 
+import com.playtika.carshop.dealservice.DealService;
 import com.playtika.carshop.domain.CarSaleInfo;
-import com.playtika.carshop.service.CarService;
+import com.playtika.carshop.carshopservice.CarService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,13 +23,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CarShopControllerTest {
 
     @Mock
-    private CarService service;
+    private CarService carService;
+
+    @Mock
+    private DealService dealService;
     private CarShopController controller;
     private MockMvc mockMvc;
 
     @Before
     public void init() {
-        controller = new CarShopController(service);
+        controller = new CarShopController(carService, dealService);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
@@ -62,7 +66,7 @@ public class CarShopControllerTest {
 
     @Test
     public void shouldReturnEmptyListIfWhereNoAddedCars() throws Exception {
-        when(service.getCars()).thenReturn(Collections.emptyList());
+        when(carService.getCars()).thenReturn(Collections.emptyList());
 
         Collection<CarSaleInfo> allCars = controller.getAllCars();
 

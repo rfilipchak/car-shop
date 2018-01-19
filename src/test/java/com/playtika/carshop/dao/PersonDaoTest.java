@@ -11,7 +11,7 @@ public class PersonDaoTest extends AbstractDaoTest<PersonDao> {
 
     @Test
     public void shouldReturnNullWhenPersonDoesNotExist() {
-        PersonEntity notExistingPerson = dao.getPersonEntityByContact("unknown");
+        PersonEntity notExistingPerson = dao.getPersonByContact("unknown");
 
         assertThat(notExistingPerson, nullValue());
     }
@@ -23,7 +23,7 @@ public class PersonDaoTest extends AbstractDaoTest<PersonDao> {
         PersonEntity expectedPerson = new PersonEntity(contact);
         expectedPerson.setId(id);
 
-        PersonEntity person = dao.getPersonEntityByContact(contact);
+        PersonEntity person = dao.getPersonByContact(contact);
 
         assertThat(person, samePropertyValuesAs(expectedPerson));
     }
