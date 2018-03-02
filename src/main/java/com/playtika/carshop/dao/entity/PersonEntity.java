@@ -1,14 +1,12 @@
 package com.playtika.carshop.dao.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "person")
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

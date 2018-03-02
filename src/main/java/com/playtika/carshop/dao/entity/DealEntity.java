@@ -1,10 +1,7 @@
 package com.playtika.carshop.dao.entity;
 
-import com.playtika.carshop.dealstatus.DealStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.playtika.carshopcommon.dealstatus.DealStatus;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -14,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class DealEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,12 +34,5 @@ public class DealEntity {
         this.person = person;
         this.buyerPrice = buyerPrice;
         dealStatus = DealStatus.ACTIVE;
-    }
-
-    public DealEntity(CarShopEntity carShopEntity, PersonEntity person, int buyerPrice, DealStatus dealStatus) {
-        this.carShopEntity = carShopEntity;
-        this.person = person;
-        this.buyerPrice = buyerPrice;
-        this.dealStatus = dealStatus;
     }
 }

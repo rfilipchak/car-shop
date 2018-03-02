@@ -7,9 +7,9 @@ import com.playtika.carshop.dao.PersonDao;
 import com.playtika.carshop.dao.entity.CarEntity;
 import com.playtika.carshop.dao.entity.CarShopEntity;
 import com.playtika.carshop.dao.entity.PersonEntity;
-import com.playtika.carshop.domain.Car;
-import com.playtika.carshop.domain.CarSaleInfo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.playtika.carshopcommon.domain.Car;
+import com.playtika.carshopcommon.domain.CarSaleInfo;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CarServiceImpl implements CarService {
 
     private final Converter converter;
@@ -25,19 +26,15 @@ public class CarServiceImpl implements CarService {
     private final CarShopDao carShopDao;
     private final PersonDao personDao;
 
-    @Autowired
-    public CarServiceImpl(Converter converter, CarDao carDao, CarShopDao carShopDao, PersonDao personDao) {
-        this.converter = converter;
-        this.carDao = carDao;
-        this.carShopDao = carShopDao;
-        this.personDao = personDao;
-    }
-
     @Override
-    public long addCar(Car car, int price, String contact) {
-        CarShopEntity carShopEntity = new CarShopEntity(checkCarForExist(car),
-                price, checkPersonForExist(contact));
-        return carShopDao.save(carShopEntity).getId();
+    public Optional<Long> addCar(Car car, int price, String contact) {
+        if(carShopDao.findCarShopEntityByCar_Registration(car.getRegistration())==null) {
+            CarShopEntity carShopEntity = new CarShopEntity(checkCarForExist(car),
+                    price, checkPersonForExist(contact));
+                    long id = carShopDao.save(carShopEntity).getId();
+            return Optional.of(id);
+        }
+        return Optional.empty();
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.playtika.carshop.web;
 
-import com.playtika.carshop.domain.Car;
-import com.playtika.carshop.domain.CarSaleInfo;
 import com.playtika.carshop.carshopservice.CarService;
+import com.playtika.carshop.dealservice.DealService;
+import com.playtika.carshopcommon.domain.Car;
+import com.playtika.carshopcommon.domain.CarSaleInfo;
+import com.playtika.supportvalues.SupportTestValues;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +29,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarShopController.class)
-public class CarShopIntegrationTest {
-
+public class CarShopApiTest extends SupportTestValues {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
-    private CarService service;
+    private CarService carService;
+    @MockBean
+    private DealService dealService;
 
     @Test
     public void shouldCreateANewCarSuccessfully() throws Exception {
         long createdCarId = 1L;
-        Car car = new Car("Ford", 2017,"AA-0177-BH", "black");
+        Car car = new Car("Ford", 2017, "AA-0177-BH", "black");
         int price = 200000;
         String contact = "contact";
-        when(service.addCar(car, price, contact)).thenReturn(createdCarId);
+
+        when(carService.addCar(car, price, contact)).thenReturn(Optional.of(createdCarId));
 
         String result = mockMvc.perform(post("/cars")
                 .content("{\"brand\": \"Ford\",\"year\":2017,\"registration\":\"AA-0177-BH\",\"color\":\"black\"}")
@@ -49,6 +53,7 @@ public class CarShopIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         Long id = Long.parseLong(result);
+
         assertThat(id).isNotNull().isEqualTo(1L);
     }
 
@@ -65,7 +70,8 @@ public class CarShopIntegrationTest {
     @Test
     public void shouldReturnAllCarsIfExist() throws Exception {
         Collection<CarSaleInfo> cars = asList(carSaleInfo(1L, "Ford"), carSaleInfo(2L, "Toyota"));
-        when(service.getCars()).thenReturn(cars);
+
+        when(carService.getCars()).thenReturn(cars);
 
         mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
@@ -79,7 +85,7 @@ public class CarShopIntegrationTest {
 
     @Test
     public void shouldReturnEmptyListIfThereAreNoCars() throws Exception {
-        when(service.getCars()).thenReturn(Collections.emptyList());
+        when(carService.getCars()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/cars"))
                 .andExpect(status().isOk())
@@ -89,7 +95,9 @@ public class CarShopIntegrationTest {
     @Test
     public void shouldReturnCarById() throws Exception {
         Long carId = 1L;
-        when(service.getCar(carId)).thenReturn(java.util.Optional.of(carSaleInfo(carId, "Test Car")));
+
+        when(carService.getCar(carId)).thenReturn(java.util.Optional.of(carSaleInfo(carId, "Test Car")));
+
         mockMvc.perform(get("/cars/" + carId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(carId))
@@ -98,7 +106,8 @@ public class CarShopIntegrationTest {
 
     @Test
     public void shouldReturnErrorIfCarDoesNotExist() throws Exception {
-        when(service.getCar(12L)).thenReturn(Optional.empty());
+        when(carService.getCar(12L)).thenReturn(Optional.empty());
+
         mockMvc.perform(get("/cars/" + 12L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value(NOT_FOUND.value()))
@@ -107,20 +116,22 @@ public class CarShopIntegrationTest {
 
     @Test
     public void shouldReturnOkAfterRemovingCarById() throws Exception {
-        when(service.removeCar(anyLong())).thenReturn(true);
+        when(carService.removeCar(anyLong())).thenReturn(true);
+
         mockMvc.perform(delete("/cars/" + 1L))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void shouldReturnErrorOnRemoveNonExistingCar() throws Exception {
-        when(service.removeCar(12L)).thenReturn(false);
+        when(carService.removeCar(12L)).thenReturn(false);
+
         mockMvc.perform(delete("/cars/" + 12L))
                 .andExpect(status().isNoContent());
     }
 
     private CarSaleInfo carSaleInfo(Long id, String model) {
-        Car testCar = new Car(model, 2017,"J1234","black");
+        Car testCar = new Car(model, 2017, "J1234", "black");
         return new CarSaleInfo(id, testCar, 200000, "contact");
     }
 }

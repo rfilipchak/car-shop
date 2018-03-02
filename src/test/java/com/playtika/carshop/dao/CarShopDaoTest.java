@@ -20,7 +20,7 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
 
     @Test
     public void shouldReturnNullWhetCarsInShopDoesNotExist() {
-        CarShopEntity notExistingCarShopItem = dao.findOne(1L);
+        CarShopEntity notExistingCarShopItem = dao.findOne(10000L);
 
         assertThat(notExistingCarShopItem, nullValue());
     }
@@ -47,12 +47,12 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
     @ExpectedDataSet(value = "expected-car-shop-item.xml")
     @Commit
-    public void shoulAddCarShopItem() {
+    public void shouldAddCarShopItem() {
         long id = addCarToCarsDb(1, 2000, 1);
 
         boolean result = dao.exists(id);
 
-        assertThat(result,is(true));
+        assertThat(result, is(true));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
     @DataSet(value = "expected-car-shop-item.xml")
     @ExpectedDataSet(value = "empty-car-shop.xml")
     @Commit
-    public void shoulNotRemoveCarAndPersonAfterRemoveCarShopItem() {
+    public void shouldNotRemoveCarAndPersonAfterRemoveCarShopItem() {
         dao.delete(1L);
 
         boolean result = dao.exists(1L);
@@ -94,7 +94,7 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
 
     @Test
     @DataSet(value = "empty-car-shop.xml", disableConstraints = true, useSequenceFiltering = false)
-    public void shouidGetEmptyIfDbIsEmpty() {
+    public void shouldGetEmptyIfDbIsEmpty() {
         List<CarShopEntity> allCarShopItem = dao.findAll();
 
         assertThat(allCarShopItem, is(Collections.EMPTY_LIST));
@@ -107,13 +107,13 @@ public class CarShopDaoTest extends AbstractDaoTest<CarShopDao> {
         int price = 2000;
         long personId = 1L;
         long firstId = addCarToCarsDb(carId, price, personId);
-        long secondId =addCarToCarsDb(carId, price, personId);
+        long secondId = addCarToCarsDb(carId, price, personId);
 
         boolean first = dao.exists(firstId);
         boolean second = dao.exists(secondId);
 
-        assertThat(first,is(true));
-        assertThat(second,is(false));
+        assertThat(first, is(true));
+        assertThat(second, is(false));
     }
 
     private long addCarToCarsDb(long carId, int price, long personId) {

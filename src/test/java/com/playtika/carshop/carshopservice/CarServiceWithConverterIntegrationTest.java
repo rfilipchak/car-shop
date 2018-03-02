@@ -7,8 +7,9 @@ import com.playtika.carshop.dao.PersonDao;
 import com.playtika.carshop.dao.entity.CarEntity;
 import com.playtika.carshop.dao.entity.CarShopEntity;
 import com.playtika.carshop.dao.entity.PersonEntity;
-import com.playtika.carshop.domain.Car;
-import com.playtika.carshop.domain.CarSaleInfo;
+import com.playtika.carshop.dealservice.DealService;
+import com.playtika.carshopcommon.domain.Car;
+import com.playtika.carshopcommon.domain.CarSaleInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 public class CarServiceWithConverterIntegrationTest {
 
     private CarService service;
+    private DealService dealService;
     @Mock
     private CarDao carDao;
     @Mock
